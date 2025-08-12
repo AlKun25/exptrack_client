@@ -48,6 +48,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       onAuthSuccess();
     } catch (error) {
+      console.log(error);
       setErrors({ form: 'Authentication failed' });
     } finally {
       setIsLoading(false);

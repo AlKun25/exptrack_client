@@ -4,14 +4,13 @@ import { useState } from 'react';
 import { Experiment, ServerConfig } from '@/types';
 import { useExperiments } from '@/hooks/useExperiments';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ExperimentDetails } from '@/components/experiment-details';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { formatDateTime, formatDuration, getStatusColor, getStatusIcon } from '@/lib/utils';
+import { formatDateTime, getStatusColor, getStatusIcon } from '@/lib/utils';
 import { FileText, Trash2, Clock, Activity } from 'lucide-react';
 
 interface ExperimentDashboardProps {
@@ -157,10 +156,10 @@ export function ExperimentDashboard({ serverConfig, onLogout, onServerConfig }: 
                 <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-medium mb-2">No experiments found</h3>
                 <p className="text-muted-foreground mb-4">
-                  Create log files in the server's log directory to start tracking experiments.
+                  Create log files in the server&apos;s log directory to start tracking experiments.
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Example: <code className="bg-muted px-2 py-1 rounded">echo "hello" {'>>'} logs/exp_$(date +%s)_$$.log</code>
+                  Example: <code className="bg-muted px-2 py-1 rounded">echo &quot;hello&quot; {'>>'} logs/exp_$(date +%s)_$$.log</code>
                 </p>
               </div>
             ) : (
