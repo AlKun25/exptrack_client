@@ -9,14 +9,11 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { formatFileSize, formatDateTime, formatDuration, getStatusColor } from '@/lib/utils';
+import { formatDateTime, formatDuration, getStatusColor } from '@/lib/utils';
 import { 
   ArrowLeft, 
   Trash2, 
   FileText, 
-  Clock, 
-  HardDrive, 
-  Activity, 
   RefreshCw,
   Download,
   Maximize2
@@ -68,7 +65,7 @@ export function ExperimentDetails({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${experiment.name}.log`;
+    a.download = `${experiment.id}.log`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -83,7 +80,7 @@ export function ExperimentDetails({
         <!DOCTYPE html>
         <html>
         <head>
-          <title>${experiment.name} - Logs</title>
+          <title>${experiment.id} - Logs</title>
           <style>
             body { 
               font-family: 'Fira Code', 'Courier New', monospace; 
@@ -114,7 +111,7 @@ export function ExperimentDetails({
               Back
             </Button>
             <div>
-              <h1 className="text-lg font-semibold">{experiment.name}</h1>
+              <h1 className="text-lg font-semibold">{experiment.id}</h1>
               <p className="text-sm text-muted-foreground">Experiment Details</p>
             </div>
           </div>
@@ -132,16 +129,16 @@ export function ExperimentDetails({
       </header>
 
       {/* Main Content */}
-      <main className="container py-6">
-        <div className="grid gap-6 lg:grid-cols-3">
+      <main className="container py-8 px-6">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Experiment Info */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-8">
             {/* Status Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Experiment Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6 p-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Status</span>
                   <Badge variant="outline" className={getStatusColor(experiment.status)}>
@@ -149,14 +146,18 @@ export function ExperimentDetails({
                   </Badge>
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Created</span>
-                    <span>{formatDateTime(experiment.created_at)}</span>
+                    <span className="text-muted-foreground">Started</span>
+                    <span>{formatDateTime(experiment.started_at)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Duration</span>
-                    <span>{formatDuration(experiment.created_at, experiment.updated_at)}</span>
+                    <span>{formatDuration(experiment.started_at, experiment.last_updated)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Last Updated</span>
+                    <span>{formatDateTime(experiment.last_updated)}</span>
                   </div>
                 </div>
 
@@ -168,6 +169,13 @@ export function ExperimentDetails({
                 )}
 
                 <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Command</span>
+                  <span className="font-mono text-xs truncate max-w-[200px]" title={experiment.command}>
+                    {experiment.command}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Log File</span>
                   <span className="font-mono text-xs truncate max-w-[200px]" title={experiment.log_file}>
                     {experiment.log_file.split('/').pop()}
@@ -176,37 +184,7 @@ export function ExperimentDetails({
               </CardContent>
             </Card>
 
-            {/* Stats Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Statistics</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Lines</span>
-                  </div>
-                  <span className="font-medium">{experiment.lines.toLocaleString()}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <HardDrive className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">File Size</span>
-                  </div>
-                  <span className="font-medium">{formatFileSize(experiment.size)}</span>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Last Updated</span>
-                  </div>
-                  <span className="text-sm">{formatDateTime(experiment.updated_at)}</span>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Logs */}
@@ -269,14 +247,14 @@ export function ExperimentDetails({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {error && (
-                  <Alert variant="destructive" className="mb-4">
+                  <Alert variant="destructive" className="mb-6">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
                 
-                <ScrollArea className="h-[600px] w-full rounded-md border bg-muted p-4">
+                <ScrollArea className="h-[600px] w-full rounded-md border bg-muted p-6">
                   {isLoading && logs.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                       <LoadingSpinner size="lg" />

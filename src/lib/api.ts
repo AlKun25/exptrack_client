@@ -10,6 +10,7 @@ class ApiClient {
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -66,9 +67,8 @@ class ApiClient {
     return response.data;
   }
 
-  async deleteExperiment(id: string): Promise<{ status: string; message: string }> {
-    const response = await this.instance.delete<{ status: string; message: string }>(`/experiments/${id}`);
-    return response.data;
+  async deleteExperiment(id: string): Promise<void> {
+    await this.instance.delete(`/experiments/${id}`);
   }
 
   async getConfig(): Promise<ServerConfigResponse> {

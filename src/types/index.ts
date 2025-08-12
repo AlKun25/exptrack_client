@@ -1,13 +1,11 @@
 export interface Experiment {
     id: string;
-    name: string;
-    log_file: string;
-    status: 'running' | 'completed' | 'failed' | 'unknown';
     pid: number | null;
-    created_at: string;
-    updated_at: string;
-    size: number;
-    lines: number;
+    command: string;
+    started_at: string;
+    log_file: string;
+    status: string;
+    last_updated: string;
   }
   
   export interface ServerConfig {

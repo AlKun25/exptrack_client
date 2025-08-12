@@ -36,30 +36,34 @@ export function formatDuration(startTime: string, endTime?: string): string {
 
 export function getStatusColor(status: string): string {
   switch (status) {
-    case 'running': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-    case 'completed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-    case 'failed': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+    case 'running': return 'bg-chart-3/10 text-chart-3 border-chart-3/20'
+    case 'completed': return 'bg-primary/10 text-primary border-primary/20'
+    case 'failed': return 'bg-destructive/10 text-destructive border-destructive/20'
+    default: return 'bg-muted text-muted-foreground border-border'
   }
 }
 
-export function getStatusIcon(status: string): React.ReactElement {
+export function getStatusIcon(status: string): { className: string; size: string } {
   switch (status) {
     case 'running':
-      return (
-        <div className="flex-shrink-0 h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-      )
+      return {
+        className: "flex-shrink-0 rounded-full bg-chart-3 animate-pulse",
+        size: "h-3 w-3"
+      }
     case 'completed':
-      return (
-        <div className="flex-shrink-0 h-4 w-4 rounded-full bg-blue-500" />
-      )
+      return {
+        className: "flex-shrink-0 rounded-full bg-primary",
+        size: "h-3 w-3"
+      }
     case 'failed':
-      return (
-        <div className="flex-shrink-0 h-4 w-4 rounded-full bg-red-500" />
-      )
+      return {
+        className: "flex-shrink-0 rounded-full bg-destructive",
+        size: "h-3 w-3"
+      }
     default:
-      return (
-        <div className="flex-shrink-0 h-4 w-4 rounded-full bg-gray-500" />
-      )
+      return {
+        className: "flex-shrink-0 rounded-full bg-muted-foreground",
+        size: "h-3 w-3"
+      }
   }
 }

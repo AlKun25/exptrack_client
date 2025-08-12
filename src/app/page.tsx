@@ -11,12 +11,14 @@ type Screen = 'auth' | 'server-config' | 'dashboard';
 
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('auth');
-  const { loadConfig } = useServerConfig();
+  const [serverConfig, setServerConfig] = useState<ServerConfig | null>(null);
+  const { loadConfig, saveConfig } = useServerConfig();
 
   useEffect(() => {
     // Check for saved configuration on mount
     const savedConfig = loadConfig();
     if (savedConfig) {
+      setServerConfig(savedConfig);
       setCurrentScreen('dashboard');
     }
   }, [loadConfig]);
@@ -26,10 +28,13 @@ export default function Home() {
   };
 
   const handleServerConfigured = (config: ServerConfig) => {
+    saveConfig(config);
+    setServerConfig(config);
     setCurrentScreen('dashboard');
   };
 
   const handleLogout = () => {
+    setServerConfig(null);
     setCurrentScreen('auth');
   };
 
@@ -44,9 +49,9 @@ export default function Home() {
           onBack={() => setCurrentScreen('auth')}
         />
       )}
-      {currentScreen === 'dashboard' && (
+      {currentScreen === 'dashboard' && serverConfig && (
         <ExperimentDashboard 
-          serverConfig={loadConfig()!}
+          serverConfig={serverConfig}
           onLogout={handleLogout}
           onServerConfig={() => setCurrentScreen('server-config')}
         />

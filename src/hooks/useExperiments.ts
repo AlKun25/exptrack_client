@@ -48,14 +48,37 @@ export function useExperiments(config: ServerConfig | null) {
   useEffect(() => {
     if (!config) return;
 
-    const unsubscribe = sseClient.subscribe((data) => {
-      setExperiments(data.experiments);
+    // Health check before connecting SSE
+    const connectSSE = async () => {
+      try {
+        apiClient.setConfig(config);
+        await apiClient.healthCheck();
+        console.log('Health check passed, connecting SSE...');
+        
+        const unsubscribe = sseClient.subscribe((data) => {
+          if (data && data.experiments && Array.isArray(data.experiments)) {
+            setExperiments(data.experiments);
+          }
+        });
+
+        sseClient.connect(config.url, config.apiKey);
+
+        return unsubscribe;
+      } catch (error) {
+        console.error('Health check failed, SSE connection aborted:', error);
+        setError('Failed to connect to server');
+        return () => {};
+      }
+    };
+
+    let unsubscribe: (() => void) | undefined;
+    
+    connectSSE().then((unsub) => {
+      unsubscribe = unsub;
     });
 
-    sseClient.connect(config.url, config.apiKey);
-
     return () => {
-      unsubscribe();
+      if (unsubscribe) unsubscribe();
       sseClient.disconnect();
     };
   }, [config]);
